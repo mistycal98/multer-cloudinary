@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const upload = require("./multer");
 const cloudinary = require("./cloudinary");
+const User = require("./model/user");
 
 dotenv.config({ path: "./config.env" });
 
@@ -13,11 +14,19 @@ app.use(express.json());
 app.get("/", (req, res) => {
 	res.json({ status: "Success", message: "This is the Home Page" });
 });
+
+// POST method
 app.post("/", upload.single("image"), async (req, res) => {
-	try{
+	try {
 		const cloudinaryResult = await cloudinary.uploader.upload(req.file.path);
-		res.json(cloudinaryResult);   
-	}catch(err){
+		let user = new User({
+			name: req.body.name,
+			photo_cloudinary: cloudinaryResult.url,
+			cloudinary_id: cloudinaryResult.public_id,
+		});
+		let result = await user.save();
+		res.json(result);
+	} catch (err) {
 		console.log(err);
 	}
 });
