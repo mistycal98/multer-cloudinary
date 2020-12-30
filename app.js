@@ -8,6 +8,8 @@ dotenv.config({ path: "./config.env" });
 const app = express();
 
 app.use(express.json());
+
+// User Routes
 app.use("/user", multerRoute);
 
 // DB Connection 
